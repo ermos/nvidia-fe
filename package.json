@@ -1,0 +1,17 @@
+{
+  "name": "nvidia-fe",
+  "version": "1.0.0",
+  "description": "Get RTX buy link before all !",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/main.js"
+  },
+  "author": "Kilian SMITI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "open": "^8.2.0",
+    "play-sound": "^1.1.3"
+  }
+}
