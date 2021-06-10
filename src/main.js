@@ -5,8 +5,15 @@ const player = require('play-sound')();
 call()
 
 async function call() {
+    const d = new Date()
+    const dateText = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+
+    let find = false
     let products = []
-    await axios.get('https://api.nvidia.partners/edge/product/search?page=1&limit=9&locale=fr-fr&search=RTX%203070%20ti&manufacturer=NVIDIA&manufacturer_filter=NVIDIA~1,ACER~0,ALIENWARE~0,AORUS~0,ASUS~0,DELL~0,EVGA~0,GAINWARD~0,GIGABYTE~0,HP~0,MSI~0,PALIT~0,PNY~0,RAZER~0,ZOTAC~0')
+
+    console.log(`\x1b[33m---------------------------------------\x1b[0m`)
+
+    await axios.get('https://api.nvidia.partners/edge/product/search?page=1&limit=9&locale=fr-fr&search=NVIDIA%20GEFORCE%20RTX&category=GPU&manufacturer=NVIDIA&manufacturer_filter=NVIDIA~6,ACER~0,ALIENWARE~0,AORUS~0,ASUS~0,DELL~0,EVGA~0,GAINWARD~0,GIGABYTE~0,HP~0,INNO3D~0,MSI~0,PALIT~0,PNY~0,RAZER~0,ZOTAC~0&sorting=lp')
         .then(response => {
             //productDetails => available products
             //suggestedProductDetails => not available products
@@ -15,24 +22,30 @@ async function call() {
         .catch(err => console.log(err))
 
     if (products.length !== 0) {
-        products[0].retailers.forEach(e => {
-            // store 45 = ldlc
-            if (e.storeId == '45') {
-                open(e.purchaseLink)
+        products.forEach(product => {
+            if (product.prdStatus !== 'out_of_stock') {
+                product.retailers.forEach(retailer => {
+                    console.log(`\x1b[32m[${dateText}] ${product.displayName} => STOCK !!!!\x1b[0m`)
 
-                let sound = player.play('./src/alarm.mp3', (err) => {
-                    if (err) console.log(`Could not play sound: ${err}`);
-                });
-                setTimeout(() => sound.kill(), 5000)
+                    if (!find) {
+                        open(retailer.purchaseLink + "?a")
 
-                return
+                        let sound = player.play('./src/alarm.mp3', (err) => {
+                            if (err) console.log(`Could not play sound: ${err}`);
+                        });
+                        setTimeout(() => sound.kill(), 5000)
+                    }
+
+                    find = true
+                })
+            } else {
+                console.log(`\x1b[31m[${dateText}] ${product.displayName} => NO STOCK\x1b[0m`)
             }
         })
     }
 
-    let d = new Date()
-    console.log(d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds())
-
-    setTimeout(() => call(), 1000)
+    if (!find) {
+        setTimeout(() => call(), 1000)
+    }
 }
 
