@@ -27,6 +27,10 @@ npm install
 npm run start
 ```
 
+## No sound ?
+
+If you are a windows user, you need to install the library [mplay](http://www.mplayerhq.hu/)
+
 ## Bonus
 
 We can use Tampermonkey for automating action in LDLC website.
